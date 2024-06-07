@@ -139,8 +139,10 @@ If you're a developer updating the TOSCA tool:
      docker-compose -f docker-compose-dev.yml build --no-cache
      ```
 
-   - Restart the system using the command from step 7.
-
+   - Restart the system using the command from step 1.
+   ```bash
+     docker-compose -f docker-compose-dev.yml up -d
+  ```
 **Additional Notes**
 
 - Consider using a version control system like Git to manage code changes.
