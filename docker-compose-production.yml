@@ -37,4 +37,4 @@ services:
     image: tosca-production-dev:latest
     container_name: tosca-2-web-production-container
     ports:
-      - 80:80
+      - 8181:80

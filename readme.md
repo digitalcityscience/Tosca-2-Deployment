@@ -4,7 +4,7 @@
 - add geoserver setting for mbtiles
 -
 
-This document guides you through setting up a TOSCA deployment environment using Docker Compose for development purposes.
+This document guides you through setting up a TOSCA environment using Docker Compose.
 
 **Prerequisites**
 
@@ -21,9 +21,9 @@ Before embarking on the deployment process, it's essential to familiarize yourse
 
 **Port Mapping:**
 
-- Port mapping plays a crucial role in ensuring proper application communication. Refer to the `docker-compose-productionyml` file to view all port mappings for the various components. If no conflicting applications are running on your computer, the default ports will function seamlessly.
+- Port mapping plays a crucial role in ensuring proper application communication. Refer to the `docker-compose-production.yml` file to view all port mappings for the various components. If no conflicting applications are running on your computer, the default ports will function seamlessly.
   - Application ports are also documented in either the `.env` file or `docker-compose-production.yml` file for easy reference.
-  - Key Access Points:
+  - Key Access Points with Default Port Settings:
     - TOSCA Web App: http://localhost:8181
     - GeoServer: http://localhost:8080/geoserver/web
     - PostGIS Connection: localhost:5435
@@ -142,11 +142,15 @@ If you're a developer updating the TOSCA tool:
      ```
 
    - Restart the system using the command from step 1.
+
    ```bash
      docker-compose -f docker-compose-dev.yml up -d
-  ```
+   ```
+
+```
 **Additional Notes**
 
 - Consider using a version control system like Git to manage code changes.
 - Refer to the official Docker Compose documentation for more advanced usage: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
 - For production deployments, consult the TOSCA documentation for more robust configurations.
+```
