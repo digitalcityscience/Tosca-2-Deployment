@@ -1,0 +1,53 @@
+version: "3.9"
+
+# volumes:
+#   tosca-2-geoserver-deployment-dev:
+#   tosca-2-geo-db-data-deployment-dev:
+
+services:
+  # db:
+  #   image: kartoza/postgis:${POSTGIS_VERSION_TAG}
+  #   container_name: tosca-2-db-deployment-container
+  #   volumes:
+  #     - tosca-2-geo-db-data-deployment-dev:/var/lib/postgresql
+  #   ports:
+  #     - ${POSTGRES_PORT}:5432
+  #   environment:
+  #     - POSTGRES_DB=${POSTGRES_DB}
+  #     - POSTGRES_USER=${POSTGRES_USER}
+  #     - POSTGRES_PASS=${POSTGRES_PASS}
+  #     - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
+  #     - FORCE_SSL=TRUE
+  #   restart: on-failure
+  #   healthcheck:
+  #     test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+
+  # geoserver:
+  #   image: orttak/tosca-geoserver
+  #   container_name: tosca-2-geoserver-deployment-container
+  #   volumes:
+  #     - tosca-2-geoserver-deployment-dev:/usr/share/geoserver/data_dir
+  #     - /home/akif/Desktop/HCU/TOSCA-2/data:/mnt/data
+  #     # - LOCAL_FOLDER_FULL_PATH:/mnt/data
+  #   ports:
+  #     - ${GEOSERVER_PORT}:8080
+
+  tosca-dev:
+    #Before development copy vite.config.dev.ts js as a vite.config.ts into TOSCA-2 folder. In another term you should remove default config file then copy dev config file as a vite.config.ts.
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: tosca-2-deployment-dev:latests
+    container_name: tosca-2-web-deployment-dev-container
+    ports:
+      - 5173:5173
+    volumes:
+      - ./TOSCA-2:/app
+  # Production service
+  # If you want to test the production build, you can use the following service
+  # tosca-prod:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.prod
+  #   ports:
+  #     - "80:80"

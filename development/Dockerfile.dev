@@ -1,0 +1,27 @@
+# Development stage
+FROM node:lts-alpine as development-stage
+WORKDIR /app
+
+# Copy the shell script
+COPY check_and_clone.sh /app/check_and_clone.sh
+# Make the script executable
+RUN chmod +x /app/check_and_clone.sh
+# Run the script to check and clone if necessary
+RUN /app/check_and_clone.sh 
+
+# Copy environment file
+COPY .env /app/.env
+
+# Copy package.json and package-lock.json files
+COPY TOSCA-2/package*.json ./ 
+
+
+# Install dependencies
+RUN npm install
+# Copy the rest of the application
+# COPY TOSCA-2/ .
+# Expose the port that Vite uses
+EXPOSE 5173
+
+# Command to start the development server
+CMD ["npm", "run", "dev"]
