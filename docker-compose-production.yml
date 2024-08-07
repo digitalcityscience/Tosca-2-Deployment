@@ -1,5 +1,3 @@
-version: "3.9"
-
 volumes:
   tosca-2-geoserver-deployment-production:
   tosca-2-geo-db-data-deployment-production:
@@ -9,7 +7,7 @@ services:
     image: kartoza/postgis:${POSTGIS_VERSION_TAG}
     container_name: tosca-2-db-production-container
     volumes:
-      - tosca-2-geo-db-data-production:/var/lib/postgresql
+      - tosca-2-geoserver-deployment-production:/var/lib/postgresql
     ports:
       - ${POSTGRES_PORT}:5432
     environment:
@@ -23,11 +21,11 @@ services:
       test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
 
   geoserver:
-    image: orttak/tosca-geoserver-production:latest
+    image: orttak/tosca-geoserver:latest
     container_name: tosca-2-geoserver-production-container
     volumes:
-      - tosca-2-geoserver-production:/usr/share/geoserver/data_dir
-      - LOCAL_FOLDER_FULL_PATH:/mnt/data
+      - tosca-2-geo-db-data-deployment-production:/usr/share/geoserver/data_dir
+      - ./geospatial_data_folder:/mnt/data
     ports:
       - ${GEOSERVER_PORT}:8080
   tosca-web:
