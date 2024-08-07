@@ -16,16 +16,24 @@ This guide provides simple steps to set up a TOSCA environment using Docker Comp
 
 1. **Download and Extract TOSCA Zip File**
    - Download the TOSCA deployment zip file.
+   ![alt text](./img/github_dow.png)
    - Extract the contents into your target folder.
+   ![alt text](./img/tosca_folder.png)
+
 
 2. **Create the `.env` File**
-   - Copy the `.env.example` file and rename it to `.env`.
-   - Open the `.env` file and set your MapTiler API key:
+   - Copy the `.env.example` file and rename it to `.env`. It should be same directory as docker-compose and Tosca-XXX-app.ps1 scripts.
+   ![alt text](./img/envFile.png)
+   - Open the `.env` file and set your MapTiler API key: 
+    - You can use ***VsCode*** appliction to make this changes or you can also use ***Notepad*** application in Windows.
      ```
      VITE_MAPTILER_API_KEY=your_actual_maptiler_api_key
      ```
-   - The application will open with the default location as Kochi. To change this location, update the respective coordinates in the `.env` file.
+  <br>
+   - The application will open with the default location as ***Kochi***. To change this location, update the respective coordinates in the `.env` file.
+
    - **Note:** Without the correct MapTiler API key, the application will not start.
+   <br>
 
 3. **Verify Geospatial Data Folder**
    - If you want to upload geospatial raw data such as .shp, geopackage, etc., to GeoServer, place the data in the default `geospatial_data_folder`. If you want to map different files in GeoServer, read the developer mode section below on Docker Compose volume mapping or refer to various online resources on the topic.
@@ -38,6 +46,16 @@ This guide provides simple steps to set up a TOSCA environment using Docker Comp
 
 
 ### Running the Deployment Scripts
+> [!WARNING] 
+> When running the scripts below, you might encounter a security error, as shown in the image. If you >  are not an admin on your computer, you will need assistance from your IT department.
+ 
+
+ ![alt text](./img/powershellError.png)
+
+> [!WARNING] 
+> To resolve this issue, unblock the script from the "Properties" menu. Make sure to perform this step for all the scripts shown in the image below.
+
+![alt text](./img/powershellper.png)
 
   #### **1-Build the Application (First Time or After Updates)**
   - Right-click on the `Tosca-Build-app.ps1` script and select "Run with PowerShell".
@@ -85,7 +103,7 @@ This module is still under development. To see this version, there are two impor
 
 To access the CPT module, click on the datastore located at the top left of the TOSCA web app. In the next update, the CPT will have its own dedicated interface. This functionality has been implemented this way for development purposes. You can see an example in the image below.
 
-![alt text](image.png)
+![alt text](./img/cpt.png)
 ---
 
 ## Developer Documentation
