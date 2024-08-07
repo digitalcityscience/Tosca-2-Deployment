@@ -40,7 +40,7 @@ try {
     Write-Host "Starting TOSCA system..."
     Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml down"
 
-    Write-Host "TOSCA system started successfully." -ForegroundColor Green
+    Write-Host "TOSCA system closed successfully." -ForegroundColor Green
 
     # Display Docker logs
     Write-Host "Showing Docker logs..."
