@@ -1,10 +1,94 @@
 # TOSCA Deployment with Docker
 
-- add lat lon detail into docs
-- add geoserver setting for mbtiles
--
+## User Documentation
 
-This document guides you through setting up a TOSCA environment using Docker Compose.
+### Introduction
+
+This guide provides simple steps to set up a TOSCA environment using Docker Compose. Follow these instructions to deploy the TOSCA system on your local machine.
+
+### Prerequisites
+
+- **Docker Desktop:** [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+
+**Important: Ensure Docker Desktop is installed and running before proceeding with the deployment.**
+
+### Deployment Steps
+
+1. **Download and Extract TOSCA Zip File**
+   - Download the TOSCA deployment zip file.
+   - Extract the contents into your target folder.
+
+2. **Create the `.env` File**
+   - Copy the `.env.example` file and rename it to `.env`.
+   - Open the `.env` file and set your MapTiler API key:
+     ```
+     VITE_MAPTILER_API_KEY=your_actual_maptiler_api_key
+     ```
+   - The application will open with the default location as Kochi. To change this location, update the respective coordinates in the `.env` file.
+   - **Note:** Without the correct MapTiler API key, the application will not start.
+
+3. **Verify Geospatial Data Folder**
+   - If you want to upload geospatial raw data such as .shp, geopackage, etc., to GeoServer, place the data in the default `geospatial_data_folder`. If you want to map different files in GeoServer, read the developer mode section below on Docker Compose volume mapping or refer to various online resources on the topic.
+
+4. **Copy Your Data into Geospatial Data Folder**
+   - When uploading data within GeoServer, you can see all your files under the `/mnt/data` path in the store section. To access the `/mnt/data` folder, navigate to the "/" root directory.
+
+5. **Running the Deployment Scripts**
+   - Carefully read the "Running the Deployment Scripts" section and follow the steps accordingly.
+
+
+### Running the Deployment Scripts
+
+  #### **1-Build the Application (First Time or After Updates)**
+  - Right-click on the `Tosca-Build-app.ps1` script and select "Run with PowerShell".
+  - This script will:
+    - Check if Docker Desktop is running.
+    - Verify the `.env` file and its parameters.
+    - Build and start the Docker containers.
+
+**Note:** If you receive a notification from the TOSCA team about an update, you will need to rerun this script. Your data in GeoServer and PostGIS will not be lost; only changes in the frontend will be applied. During this update process, the role of the `.env` file is crucial. Carefully read the email from the TOSCA team, and if there are any changes needed in the `.env` file, they will be highlighted.
+
+To apply the update:
+
+1. Make the necessary changes in the `.env` file as instructed. 
+2. Right-click on `Tosca-Build-app.ps1` and select "Run with PowerShell" to run the script and apply the update.
+
+#### **2-Start the Application**
+  - Right-click on the `Tosca-Run-app.ps1` script and select "Run with PowerShell".
+  - This script will start the Docker containers.
+  - Key Access Points with Default Port Settings:
+    TOSCA Web App: http://localhost:8181
+    GeoServer: http://localhost:8080/geoserver/web
+    PostGIS Connection: localhost:5435
+
+#### **3-Stop the Application**
+  - Right-click on the `Tosca-DOWN-app.ps1` script and select "Run with PowerShell".
+  - This script will stop the Docker containers.
+
+### Important Notes
+
+- **Docker Desktop:** Ensure Docker Desktop is running before executing any scripts.
+- **MapTiler API Key:** Make sure to update your `.env` file with the correct MapTiler API key and other necessary parameters before building the application.
+- For any issues or further customization, please refer to the Developer Documentation.
+
+---
+Citizen Participation Tool
+
+This module is still under development. To see this version, there are two important steps that must be completed before starting the system.
+
+  1. Configure .env File:
+        - Before starting the system, you need to define the relevant parameters in the .env file. You must specify the target workspace (VITE_PARTICIPATION_DEMO_WORKSPACE), the target layer (VITE_PARTICIPATION_DEMO_LAYER), and the target coordinates for the Citizen Participation Tool (CTP).
+
+    Example entries in the .env file:
+    VITE_PARTICIPATION_DEMO_LAYER="ctp_layer"
+    VITE_PARTICIPATION_DEMO_WORKSPACE="CTP"
+
+To access the CPT module, click on the datastore located at the top left of the TOSCA web app. In the next update, the CPT will have its own dedicated interface. This functionality has been implemented this way for development purposes. You can see an example in the image below.
+
+![alt text](image.png)
+---
+
+## Developer Documentation
 
 **Prerequisites**
 
@@ -17,7 +101,7 @@ Before embarking on the deployment process, it's essential to familiarize yourse
 
 **Environment Selection:**
 
-- **Local Development:** Utilize the `docker-compose-production.yml` file for streamlined development on your local machine (laptop).
+- **Local Development:** Utilize the `docker-compose-production.yml` file for streamlined development on your machine.
 
 **Port Mapping:**
 
