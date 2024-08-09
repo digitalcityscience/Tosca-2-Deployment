@@ -26,6 +26,14 @@ This guide provides simple steps to set up a TOSCA environment using Docker Comp
    ![alt text](./img/envFile.png)
    - Open the `.env` file and set your MapTiler API key: 
     - You can use ***VsCode*** appliction to make this changes or you can also use ***Notepad*** application in Windows.
+    > - Obtain your MapTiler API key
+    > - Go to the MapTiler website: https://docs.maptiler.com/cloud/api/authentication-key/
+    > - Create an account if you don't have one already.
+    > - Navigate to the "Account" section and then "API Keys."
+    > - Create a new key specifically for local development (do not use the default key in production environments).
+    > - Copy your newly created API key.
+
+Update the .env file: Replace the placeholder value (=) with your actual MapTiler API key in the .env file. Ensure there are no spaces between the variable name and the key itself.
      ```
      VITE_MAPTILER_API_KEY=your_actual_maptiler_api_key
      ```
