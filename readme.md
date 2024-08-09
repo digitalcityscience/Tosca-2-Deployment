@@ -1,8 +1,16 @@
 # TOSCA Deployment with Docker
 
-## User Documentation
+## Introduction
 
-### Introduction
+This document is divided into two main sections: User Documentation and Developer Documentation.
+
+**User Documentation**: This section is intended for general users who want to quickly set up and run the TOSCA system on their local machine with minimal involvement. It provides straightforward instructions to get the application up and running.
+
+**Developer Documentation**: This section is designed for developers or advanced users who may need to customize, update, or troubleshoot the TOSCA system. It includes more detailed technical instructions and considerations for working with the underlying infrastructure.
+
+Please follow the section that best matches your role or level of expertise.
+
+## User Documentation
 
 This guide provides simple steps to set up a TOSCA environment using Docker Compose. Follow these instructions to deploy the TOSCA system on your local machine.
 
