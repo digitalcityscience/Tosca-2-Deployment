@@ -1,1 +1,1 @@
-
+docker build -f dockerfile/Dockerfile.prod  -t tosca-web-production:latest . --no-cache
