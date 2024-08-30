@@ -1,8 +1,16 @@
 # TOSCA Deployment with Docker
 
-## User Documentation
+## Introduction
 
-### Introduction
+This document is divided into two main sections: User Documentation and Developer Documentation.
+
+**User Documentation**: This section is intended for general users who want to quickly set up and run the TOSCA system on their local machine with minimal involvement. It provides straightforward instructions to get the application up and running.
+
+**Developer Documentation**: This section is designed for developers or advanced users who may need to customize, update, or troubleshoot the TOSCA system. It includes more detailed technical instructions and considerations for working with the underlying infrastructure.
+
+Please follow the section that best matches your role or level of expertise.
+
+## User Documentation
 
 This guide provides simple steps to set up a TOSCA environment using Docker Compose. Follow these instructions to deploy the TOSCA system on your local machine.
 
@@ -26,6 +34,14 @@ This guide provides simple steps to set up a TOSCA environment using Docker Comp
    ![alt text](./img/envFile.png)
    - Open the `.env` file and set your MapTiler API key: 
     - You can use ***VsCode*** appliction to make this changes or you can also use ***Notepad*** application in Windows.
+    > - Obtain your MapTiler API key
+    > - Go to the MapTiler website: https://docs.maptiler.com/cloud/api/authentication-key/
+    > - Create an account if you don't have one already.
+    > - Navigate to the "Account" section and then "API Keys."
+    > - Create a new key specifically for local development (do not use the default key in production environments).
+    > - Copy your newly created API key.
+
+Update the .env file: Replace the placeholder value (=) with your actual MapTiler API key in the .env file. Ensure there are no spaces between the variable name and the key itself.
      ```
      VITE_MAPTILER_API_KEY=your_actual_maptiler_api_key
      ```
