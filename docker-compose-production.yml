@@ -1,38 +1,224 @@
-volumes:
-  tosca-2-geoserver-deployment-production:
-  tosca-2-geo-db-data-deployment-production:
-
+version: "3.3"
+# Common Django template for GeoNode and Celery services below
+x-common-django: &default-common-django
+  image: geonode/geonode:local
+  build:
+    context: ./dockerfile
+    dockerfile: Dockerfile.geonode
+  restart: unless-stopped
+  env_file:
+    - .env
+  volumes:
+    # - ".:/usr/src/geonode"
+    - statics:/mnt/volumes/statics
+    - geoserver-data-dir:/geoserver_data/data
+    - backup-restore:/backup_restore
+    - data:/data
+    - tmp:/tmp
+  depends_on:
+    db:
+      condition: service_healthy
 services:
-  db:
-    image: kartoza/postgis:${POSTGIS_VERSION_TAG}
-    container_name: tosca-2-db-production-container
-    volumes:
-      - tosca-2-geoserver-deployment-production:/var/lib/postgresql
-    ports:
-      - ${POSTGRES_PORT}:5432
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASS=${POSTGRES_PASS}
-      - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
-      - FORCE_SSL=TRUE
-    restart: on-failure
-    healthcheck:
-      test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
-
+  # Geoserver backend
   geoserver:
-    image: orttak/tosca-geoserver:latest
-    container_name: tosca-2-geoserver-production-container
-    volumes:
-      - tosca-2-geo-db-data-deployment-production:/usr/share/geoserver/data_dir
-      - ./geospatial_data_folder:/mnt/data
+    image: orttak/tosca-geonode-geoserver:2.24.4
+    container_name: geoserver4${COMPOSE_PROJECT_NAME}
+    healthcheck:
+      test: "curl -m 10 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://geoserver:8080/geoserver/ows"
+      start_period: 60s
+      interval: 60s
+      timeout: 10s
+      retries: 2
+    env_file:
+      - .env
     ports:
       - ${GEOSERVER_PORT}:8080
+    volumes:
+      - statics:/mnt/volumes/statics
+      - geoserver-data-dir:/geoserver_data/data
+      - backup-restore:/backup_restore
+      - data:/data
+      - tmp:/tmp
+      - ./geospatial_data_folder:/mnt/data
+    restart: unless-stopped
+    depends_on:
+      data-dir-conf:
+        condition: service_healthy
+      django:
+        condition: service_healthy
   tosca-web:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: tosca-production-dev:latest
+    # build:
+    #   context: ./dockerfile
+    #   dockerfile: Dockerfile.prod
+    image: tosca-web-production:latest
     container_name: tosca-2-web-production-container
+    env_file:
+      - .env
     ports:
       - 8181:80
+
+  # Our custom django application. It includes Geonode.
+  django:
+    <<: *default-common-django
+    container_name: django4${COMPOSE_PROJECT_NAME}
+    healthcheck:
+      test: "curl -m 10 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://django:8000/"
+      start_period: 60s
+      interval: 60s
+      timeout: 10s
+      retries: 2
+    environment:
+      - IS_CELERY=False
+    entrypoint: ["/usr/src/geonode/entrypoint.sh"]
+    command: "uwsgi --ini /usr/src/geonode/uwsgi.ini"
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+
+
+  # Celery worker that executes celery tasks created by Django.
+  celery:
+    <<: *default-common-django
+    container_name: celery4${COMPOSE_PROJECT_NAME}
+    depends_on:
+      django:
+        condition: service_healthy
+    environment:
+      - IS_CELERY=True
+    entrypoint: ["/usr/src/geonode/entrypoint.sh"]
+    command: "celery-cmd"
+
+  geonode:
+    # image: geonode/nginx:1.25.3-latest
+    image: orttak/tosca-geonode-nginx:latest
+    # build: ./docker/dev/nginx
+    container_name: nginx4${COMPOSE_PROJECT_NAME}
+    env_file:
+      - .env
+    environment:
+      - RESOLVER=127.0.0.11
+    ports:
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:443"
+    volumes:
+      - nginx-confd:/etc/nginx
+      - nginx-certificates:/geonode-certificates
+      - statics:/mnt/volumes/statics
+    restart: unless-stopped
+
+  # Gets and installs letsencrypt certificates
+  letsencrypt:
+    image: geonode/letsencrypt:2.6.0-latest
+    container_name: letsencrypt4${COMPOSE_PROJECT_NAME}
+    env_file:
+      - .env
+    volumes:
+      - nginx-certificates:/geonode-certificates
+    restart: unless-stopped
+
+  data-dir-conf:
+    image: orttak/geoserver-2.24.4-tosca-data:latest
+    container_name: gsconf4${COMPOSE_PROJECT_NAME}
+    entrypoint: sleep infinity
+    volumes:
+      - geoserver-data-dir:/geoserver_data/data
+    restart: unless-stopped
+    healthcheck:
+      test: "ls -A '/geoserver_data/data' | wc -l"
+
+  # PostGIS database.
+  db:
+    # use geonode official postgis 15 image
+    image: geonode/postgis:15.3-latest
+    command: postgres -c "max_connections=${POSTGRESQL_MAX_CONNECTIONS}"
+    container_name: db4${COMPOSE_PROJECT_NAME}
+    env_file:
+      - .env
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - dbbackups:/pg_backups
+    restart: unless-stopped
+    healthcheck:
+      test: "pg_isready -d postgres -U postgres"
+    # uncomment to enable remote connections to postgres
+    ports:
+      - "${DATABASE_PORT}:5432"
+
+  # Vanilla RabbitMQ service. This is needed by celery
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq4${COMPOSE_PROJECT_NAME}
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    restart: unless-stopped
+
+volumes:
+  statics:
+    name: ${COMPOSE_PROJECT_NAME}-statics
+  nginx-confd:
+    name: ${COMPOSE_PROJECT_NAME}-nginxconfd
+  nginx-certificates:
+    name: ${COMPOSE_PROJECT_NAME}-nginxcerts
+  geoserver-data-dir:
+    name: ${COMPOSE_PROJECT_NAME}-gsdatadir
+  dbdata:
+    name: ${COMPOSE_PROJECT_NAME}-dbdata
+  dbbackups:
+    name: ${COMPOSE_PROJECT_NAME}-dbbackups
+  backup-restore:
+    name: ${COMPOSE_PROJECT_NAME}-backup-restore
+  data:
+    name: ${COMPOSE_PROJECT_NAME}-data
+  tmp:
+    name: ${COMPOSE_PROJECT_NAME}-tmp
+  rabbitmq:
+    name: ${COMPOSE_PROJECT_NAME}-rabbitmq
+
+
+
+
+
+
+
+# services:
+  
+#   db:
+#     image: kartoza/postgis:${POSTGIS_VERSION_TAG}
+#     container_name: tosca-2-db-production-container
+#     volumes:
+#       - tosca-2-geoserver-deployment-production:/var/lib/postgresql
+#     ports:
+#       - ${POSTGRES_PORT}:5432
+#     environment:
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASS=${POSTGRES_PASS}
+#       - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
+#       - FORCE_SSL=TRUE
+#     restart: on-failure
+#     healthcheck:
+#       test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+
+#   geoserver:
+#     image: orttak/tosca-geoserver:latest
+#     container_name: tosca-2-geoserver-production-container
+#     volumes:
+#       - tosca-2-geo-db-data-deployment-production:/usr/share/geoserver/data_dir
+#       - ./geospatial_data_folder:/mnt/data
+#     ports:
+#       - ${GEOSERVER_PORT}:8080
+#   tosca-web:
+#     build:
+#       context: .
+#       dockerfile: ./dockerfile/Dockerfile.prod
+#     image: tosca-production-dev:latest
+#     container_name: tosca-2-web-production-container
+#     ports:
+#       - 8181:80
+
+
+# volumes:
+#   tosca-2-geoserver-deployment-production:
+#   tosca-2-geo-db-data-deployment-production:
+
+
