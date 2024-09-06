@@ -47,10 +47,9 @@ services:
       django:
         condition: service_healthy
   tosca-web:
-    # build:
-    #   context: ./dockerfile
-    #   dockerfile: Dockerfile.prod
-    image: tosca-web-production:latest
+    build:
+      context: ./dockerfile
+      dockerfile: Dockerfile.prod
     container_name: tosca-2-web-production-container
     env_file:
       - .env
