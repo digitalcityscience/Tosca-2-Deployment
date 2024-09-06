@@ -17,3 +17,6 @@
 # vscode
 /.vscode
 TOSCA-2
+openrouteservice
+pmtiles
+geospatial_data_folder/Hamburg_Sentinel2-RGB_v2.tif

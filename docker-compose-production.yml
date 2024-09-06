@@ -39,7 +39,7 @@ services:
       - backup-restore:/backup_restore
       - data:/data
       - tmp:/tmp
-      - ./geospatial_data_folder:/mnt/data
+      - ./geospatial_data_folder:/mnt/geospatial_data_folder
     restart: unless-stopped
     depends_on:
       data-dir-conf:
