@@ -106,7 +106,7 @@ try {
 
     # Attempt to stop any running Docker Compose services
     Write-Host "Stopping any existing TOSCA services..."
-    Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml down"
+    Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml down --remove-orphans"
     
     # Copy .env file to the Docker build context
     Write-Host "Copying .env file to the Docker build context..."
