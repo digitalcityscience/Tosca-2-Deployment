@@ -107,7 +107,10 @@ try {
     # Attempt to stop any running Docker Compose services
     Write-Host "Stopping any existing TOSCA services..."
     Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml down"
-
+    
+    # Copy .env file to the Docker build context
+    Write-Host "Copying .env file to the Docker build context..."
+    Copy-Item -Path "./.env" -Destination "./dockerfile" -Force	
     # Run Docker Compose to build and start the system
     Write-Host "Starting TOSCA system..."
     Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml build --no-cache"
