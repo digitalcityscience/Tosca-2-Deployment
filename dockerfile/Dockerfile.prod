@@ -1,7 +1,7 @@
 # build stage
 FROM node:lts-alpine as build-stage
 WORKDIR /app
-RUN apk add git && git clone https://github.com/digitalcityscience/TOSCA-2.git /app
+RUN apk add git && git clone --depth 1 https://github.com/digitalcityscience/TOSCA-2.git /app
 COPY .env /app/.env.production
 RUN npm install
 RUN npm run build

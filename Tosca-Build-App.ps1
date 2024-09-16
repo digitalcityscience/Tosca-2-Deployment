@@ -1,10 +1,10 @@
-# Function to display error messages and exit
+# Function to display error messages and prevent PowerShell window from closing
 function Show-Error {
     param (
         [string]$message
     )
     Write-Host "$message" -ForegroundColor Red
-    Write-Host "Press 'q' to exit..."
+    Write-Host "Press 'q' to exit or view error details..."
     while ($true) {
         $key = [System.Console]::ReadKey($true)
         if ($key.KeyChar -eq 'q') {
@@ -13,7 +13,7 @@ function Show-Error {
     }
 }
 
-# Function to display messages and exit
+# Function to display messages and prevent window from closing
 function Show-Message {
     param (
         [string]$message
@@ -122,6 +122,13 @@ try {
     Write-Host "Showing Docker logs..."
     Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml logs --tail=50"
 
+} catch {
+    # Display detailed error information and prevent the window from closing
+    Write-Host "An unexpected error occurred: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Detailed error information: $($_.Exception.StackTrace)" -ForegroundColor Red
+    Show-Error "Script encountered an error. Please see the details above."
+} finally {
+    # Ensure the window stays open
     Write-Host "Press 'q' to exit..."
     while ($true) {
         $key = [System.Console]::ReadKey($true)
@@ -129,6 +136,4 @@ try {
             exit 0
         }
     }
-} catch {
-    Show-Error "An unexpected error occurred: $_"
 }

@@ -52,10 +52,16 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
    <br>
 
 3. **Verify Geospatial Data Folder**
-   - If you want to upload geospatial raw data such as .shp, geopackage, etc., to GeoServer, place the data in the default `geospatial_data_folder`. If you want to map different files in GeoServer, read the developer mode section below on Docker Compose volume mapping or refer to various online resources on the topic.
+   - If you want to upload geospatial raw data such as .shp, geopackage, etc., to GeoServer, place the data in the default `geospatial_data_folder`. If you want to map different files into GeoServer, read the developer mode section below on Docker Compose volume mapping or refer to various online resources on the topic.
+
+       - add windows path example for end-user
 
 4. **Copy Your Data into Geospatial Data Folder**
-   - When uploading data within GeoServer, you can see all your files under the `/mnt/data` path in the store section. To access the `/mnt/data` folder, navigate to the "/" root directory.
+   - When uploading data within GeoServer, you can see all your files when you create store in Geoserver web UI. Under the `/mnt/data` path in the store section. To access the `/mnt/data` folder, navigate to the "/" root directory.
+
+   ![alt text](./img/geo-store-root.png)
+   then
+   ![alt text](./img/geoserver-mnt.png)
 
 5. **Running the Deployment Scripts**
    - Carefully read the "Running the Deployment Scripts" section and follow the steps accordingly.
@@ -92,8 +98,8 @@ To apply the update:
   - This script will start the Docker containers.
   - Key Access Points with Default Port Settings:
     TOSCA Web App: http://localhost:8181
-    GeoServer: http://localhost:8080/geoserver/web
-    PostGIS Connection: localhost:5435
+    GeoServer: http://localhost/geoserver/web
+    PostGIS Connection: localhost:5432
 
 #### **3-Stop the Application**
   - Right-click on the `Tosca-DOWN-app.ps1` script and select "Run with PowerShell".

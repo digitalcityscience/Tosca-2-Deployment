@@ -1,10 +1,10 @@
 version: "3.3"
 # Common Django template for GeoNode and Celery services below
 x-common-django: &default-common-django
-  image: geonode/geonode:local
-  build:
-    context: ./dockerfile
-    dockerfile: Dockerfile.geonode
+  image: ghcr.io/digitalcityscience/tosca-geonode:main
+  # build:
+  #   context: ./dockerfile
+  #   dockerfile: Dockerfile.geonode
   restart: unless-stopped
   env_file:
     - .env
@@ -21,7 +21,7 @@ x-common-django: &default-common-django
 services:
   # Geoserver backend
   geoserver:
-    image: orttak/tosca-geonode-geoserver:2.24.4
+    image:  ghcr.io/digitalcityscience/geoserver:main
     container_name: geoserver4${COMPOSE_PROJECT_NAME}
     healthcheck:
       test: "curl -m 10 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://geoserver:8080/geoserver/ows"
@@ -88,8 +88,8 @@ services:
     command: "celery-cmd"
 
   geonode:
-    # image: geonode/nginx:1.25.3-latest
-    image: orttak/tosca-geonode-nginx:latest
+    image: geonode/nginx:1.25.3-latest
+    # image: orttak/tosca-geonode-nginx:latest
     # build: ./docker/dev/nginx
     container_name: nginx4${COMPOSE_PROJECT_NAME}
     env_file:
@@ -116,7 +116,7 @@ services:
     restart: unless-stopped
 
   data-dir-conf:
-    image: orttak/geoserver-2.24.4-tosca-data:latest
+    image: ghcr.io/digitalcityscience/geoserver_data:main
     container_name: gsconf4${COMPOSE_PROJECT_NAME}
     entrypoint: sleep infinity
     volumes:
@@ -172,52 +172,3 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME}-tmp
   rabbitmq:
     name: ${COMPOSE_PROJECT_NAME}-rabbitmq
-
-
-
-
-
-
-
-# services:
-  
-#   db:
-#     image: kartoza/postgis:${POSTGIS_VERSION_TAG}
-#     container_name: tosca-2-db-production-container
-#     volumes:
-#       - tosca-2-geoserver-deployment-production:/var/lib/postgresql
-#     ports:
-#       - ${POSTGRES_PORT}:5432
-#     environment:
-#       - POSTGRES_DB=${POSTGRES_DB}
-#       - POSTGRES_USER=${POSTGRES_USER}
-#       - POSTGRES_PASS=${POSTGRES_PASS}
-#       - ALLOW_IP_RANGE=${ALLOW_IP_RANGE}
-#       - FORCE_SSL=TRUE
-#     restart: on-failure
-#     healthcheck:
-#       test: "PGPASSWORD=${POSTGRES_PASS} pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
-
-#   geoserver:
-#     image: orttak/tosca-geoserver:latest
-#     container_name: tosca-2-geoserver-production-container
-#     volumes:
-#       - tosca-2-geo-db-data-deployment-production:/usr/share/geoserver/data_dir
-#       - ./geospatial_data_folder:/mnt/data
-#     ports:
-#       - ${GEOSERVER_PORT}:8080
-#   tosca-web:
-#     build:
-#       context: .
-#       dockerfile: ./dockerfile/Dockerfile.prod
-#     image: tosca-production-dev:latest
-#     container_name: tosca-2-web-production-container
-#     ports:
-#       - 8181:80
-
-
-# volumes:
-#   tosca-2-geoserver-deployment-production:
-#   tosca-2-geo-db-data-deployment-production:
-
-
