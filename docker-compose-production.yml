@@ -21,7 +21,7 @@ x-common-django: &default-common-django
 services:
   # Geoserver backend
   geoserver:
-    image:  ghcr.io/digitalcityscience/geoserver:main
+    image:  ghcr.io/digitalcityscience/geoserver@sha256:6b88984e6fae573b343905d123119c68f81b7acab1e8c81726d05e639ba3561c
     container_name: geoserver4${COMPOSE_PROJECT_NAME}
     healthcheck:
       test: "curl -m 10 --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://geoserver:8080/geoserver/ows"
@@ -116,7 +116,7 @@ services:
     restart: unless-stopped
 
   data-dir-conf:
-    image: ghcr.io/digitalcityscience/geoserver_data:main
+    image: ghcr.io/digitalcityscience/geoserver_data@sha256:fcafcb1f45589d64da95850269901f00f7c6edd8b32a2dca70fe55d352a61503
     container_name: gsconf4${COMPOSE_PROJECT_NAME}
     entrypoint: sleep infinity
     volumes:
