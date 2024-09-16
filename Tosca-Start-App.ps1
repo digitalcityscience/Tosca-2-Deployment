@@ -30,6 +30,22 @@ function Show-Success {
     }
 }
 
+# Function to run Docker Compose and check exit code
+function Run-DockerCompose {
+    param (
+        [string]$arguments
+    )
+
+    # Start docker-compose process and capture output
+    $process = Start-Process -FilePath "docker-compose" -ArgumentList $arguments -PassThru -NoNewWindow -Wait
+
+    if ($process.ExitCode -eq 0) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
 try {
     # Check if .env file exists in the current directory
     if (-Not (Test-Path -Path ".env")) {
@@ -44,20 +60,17 @@ try {
         Show-Error "Error: Docker is not running or unavailable. Please start Docker and try again."
     }
 
-    # Check if docker-compose or docker compose command is available
-    $dockerComposeCommand = "docker-compose"
-    if (-Not (Get-Command $dockerComposeCommand -ErrorAction SilentlyContinue)) {
-        $dockerComposeCommand = "docker compose"
-        if (-Not (Get-Command $dockerComposeCommand -ErrorAction SilentlyContinue)) {
-            Show-Error "Error: Neither 'docker-compose' nor 'docker compose' command found. Please ensure Docker Compose is installed and available in PATH."
-        }
+    # Stop any existing containers
+    Write-Host "Closing TOSCA system..."
+    $downResult = Run-DockerCompose "-f docker-compose-production.yml down --remove-orphans"
+    if (-Not $downResult) {
+        Show-Error "Error: Failed to stop the existing TOSCA system."
     }
 
     # Run Docker Compose to build and start the system
     Write-Host "Starting TOSCA system..."
-    $dockerComposeUp = Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml up -d"
-
-    if ($dockerComposeUp) {
+    $upResult = Run-DockerCompose "-f docker-compose-production.yml up -d"
+    if ($upResult) {
         Write-Host "TOSCA system started successfully." -ForegroundColor Green
     } else {
         Show-Error "Error: Failed to start TOSCA system. Please check the logs."
@@ -65,7 +78,7 @@ try {
 
     # Display Docker logs
     Write-Host "Showing Docker logs..."
-    Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml logs --tail=50"
+    Invoke-Expression "docker-compose -f docker-compose-production.yml logs --tail=50"
 
     # Graceful exit with success message
     Show-Success "TOSCA system deployed successfully. Press 'q' to exit."

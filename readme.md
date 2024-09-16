@@ -54,7 +54,8 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
 3. **Verify Geospatial Data Folder**
    - If you want to upload geospatial raw data such as .shp, geopackage, etc., to GeoServer, place the data in the default `geospatial_data_folder`. If you want to map different files into GeoServer, read the developer mode section below on Docker Compose volume mapping or refer to various online resources on the topic.
 
-       - add windows path example for end-user
+       - C:\Users\dmz-admin\Desktop\HCU\LIG\DATA:/mnt/LIG_DATA
+       ![alt text](./img/mic-volume-sample.png)
 
 4. **Copy Your Data into Geospatial Data Folder**
    - When uploading data within GeoServer, you can see all your files when you create store in Geoserver web UI. Under the `/mnt/data` path in the store section. To access the `/mnt/data` folder, navigate to the "/" root directory.
@@ -66,6 +67,12 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
 5. **Running the Deployment Scripts**
    - Carefully read the "Running the Deployment Scripts" section and follow the steps accordingly.
 
+
+### Important Notes
+
+- **Docker Desktop:** Ensure Docker Desktop is running before executing any scripts.
+- **MapTiler API Key:** Make sure to update your `.env` file with the correct MapTiler API key and other necessary parameters before building the application.
+- For any issues or further customization, please go to TOSCA [wiki page](https://github.com/digitalcityscience/TOSCA-2/wiki)  or follow developer documentation section
 
 ### Running the Deployment Scripts
 > [!WARNING] 
@@ -85,6 +92,9 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
     - Check if Docker Desktop is running.
     - Verify the `.env` file and its parameters.
     - Build and start the Docker containers.
+    TOSCA Web App: http://localhost:8181
+    GeoServer: http://localhost/geoserver/web
+
 
 **Note:** If you receive a notification from the TOSCA team about an update, you will need to rerun this script. Your data in GeoServer and PostGIS will not be lost; only changes in the frontend will be applied. During this update process, the role of the `.env` file is crucial. Carefully read the email from the TOSCA team, and if there are any changes needed in the `.env` file, they will be highlighted.
 
@@ -94,25 +104,22 @@ To apply the update:
 2. Right-click on `Tosca-Build-app.ps1` and select "Run with PowerShell" to run the script and apply the update.
 
 #### **2-Start the Application**
-  - Right-click on the `Tosca-Run-app.ps1` script and select "Run with PowerShell".
+  - Right-click on the `Tosca-Start-App.ps1` script and select "Run with PowerShell".
   - This script will start the Docker containers.
   - Key Access Points with Default Port Settings:
     TOSCA Web App: http://localhost:8181
     GeoServer: http://localhost/geoserver/web
-    PostGIS Connection: localhost:5432
 
 #### **3-Stop the Application**
-  - Right-click on the `Tosca-DOWN-app.ps1` script and select "Run with PowerShell".
+  - Right-click on the `Tosca-Stop-App.ps1` script and select "Run with PowerShell".
   - This script will stop the Docker containers.
 
-### Important Notes
+---
 
-- **Docker Desktop:** Ensure Docker Desktop is running before executing any scripts.
-- **MapTiler API Key:** Make sure to update your `.env` file with the correct MapTiler API key and other necessary parameters before building the application.
-- For any issues or further customization, please refer to the Developer Documentation.
+**After deployment please go to [Wiki page](https://github.com/digitalcityscience/TOSCA-2/wiki) of TOSCA**
 
 ---
-Citizen Participation Tool
+### Citizen Participation Tool
 
 This module is still under development. To see this version, there are two important steps that must be completed before starting the system.
 

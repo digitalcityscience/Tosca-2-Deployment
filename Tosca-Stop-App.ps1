@@ -36,8 +36,8 @@ try {
         }
     }
 
-    # Run Docker Compose to build and start the system
-    Write-Host "Starting TOSCA system..."
+    # Run Docker Compose down to stop the system
+    Write-Host "Closing TOSCA system..."
     Invoke-Expression "$dockerComposeCommand -f docker-compose-production.yml down --remove-orphans"
 
     Write-Host "TOSCA system closed successfully." -ForegroundColor Green
