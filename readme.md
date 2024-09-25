@@ -81,6 +81,14 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
 
  ![alt text](./img/powershellError.png)
 
+> Workshop erro please run below code within Powershell. Please write search Powershell and run as a admin.
+> If command-line shows prompt same as below image please press "A" and approve for all script
+
+ ```
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned 
+ ```
+![image](https://github.com/user-attachments/assets/e70b1bbd-7b82-4b94-a2d1-90ddfe2a1d5c)
+
 > [!WARNING] 
 > To resolve this issue, unblock the script from the "Properties" menu. Make sure to perform this step for all the scripts shown in the image below.
 
