@@ -1,4 +1,4 @@
-# TOSCA Deployment with Docker
+![image](https://github.com/user-attachments/assets/f63e75fc-8800-44f6-8f8b-d4c38963f6c0)# TOSCA Deployment with Docker
 
 ## Introduction
 
@@ -85,7 +85,7 @@ Update the .env file: Replace the placeholder value (=) with your actual MapTile
 > If command-line shows prompt same as below image please press "A" and approve for all script
 
  ```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned 
+set-executionpolicy remotesigned 
  ```
 ![image](https://github.com/user-attachments/assets/e70b1bbd-7b82-4b94-a2d1-90ddfe2a1d5c)
 
