@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/f63e75fc-8800-44f6-8f8b-d4c38963f6c0)# TOSCA Deployment with Docker
+# TOSCA Deployment with Docker
 
 ## Introduction
 
